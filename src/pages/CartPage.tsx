@@ -1,0 +1,10 @@
+import { Link } from 'react-router-dom'
+import { MaterialIcon } from '../components/MaterialIcon'
+import { ProductImage } from '../components/Storefront'
+import { useCart } from '../context/CartContext'
+import { formatRupiah, products } from '../data/products'
+
+export function CartPage() {
+  const { lines, subtotal, setQuantity, removeItem } = useCart()
+  return <section className="cart-page page-shell"><div className="cart-heading"><span className="script-accent">Your selection</span><h1>Keranjang Belanja</h1><p>Periksa kembali pilihan lezat Anda sebelum melanjutkan.</p></div>{lines.length === 0 ? <div className="empty-state"><MaterialIcon name="shopping_bag" /><h2>Keranjang masih kosong</h2><p>Temukan roti dan pastry favorit Anda di katalog.</p><Link className="button primary" to="/menu">Lihat Katalog</Link></div> : <div className="cart-layout"><div className="cart-list">{lines.map((line) => { const product = products.find((item) => item.id === line.productId); if (!product) return null; return <article className="cart-line" key={line.productId}><ProductImage product={product} /><div><span className="eyebrow">{product.category}</span><h3>{product.name}</h3><strong>{formatRupiah(product.price)}</strong></div><div className="quantity"><button onClick={() => setQuantity(product.id, line.quantity - 1)}><MaterialIcon name="remove" /></button><span>{line.quantity}</span><button onClick={() => setQuantity(product.id, line.quantity + 1)}><MaterialIcon name="add" /></button></div><button className="delete-button" onClick={() => removeItem(product.id)} aria-label={`Hapus ${product.name}`}><MaterialIcon name="delete" /></button></article>})}</div><aside className="cart-summary"><h2>Ringkasan Pesanan</h2><div><span>Subtotal</span><strong>{formatRupiah(subtotal)}</strong></div><div><span>Pengiriman</span><span>Dihitung saat checkout</span></div><hr /><div className="total"><span>Total sementara</span><strong>{formatRupiah(subtotal)}</strong></div><Link className="button primary full" to="/checkout">Lanjutkan Checkout</Link><Link to="/menu">← Lanjutkan belanja</Link></aside></div>}</section>
+}
